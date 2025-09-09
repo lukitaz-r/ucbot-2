@@ -1,0 +1,33 @@
+{
+  "name": "ucbot-2",
+  "version": "0.0.1",
+  "description": "Bot multifuncional de Discord para El Último Círculo",
+  "keywords": [
+    "discordjs",
+    "javascript",
+    "node",
+    "IA"
+  ],
+  "homepage": "https://github.com/lukitaz-r/ucbot-2#readme",
+  "bugs": {
+    "url": "https://github.com/lukitaz-r/ucbot-2/issues"
+  },
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/lukitaz-r/ucbot-2.git"
+  },
+  "license": "MIT",
+  "author": "Luca Ramirez (lukitaz_r)",
+  "type": "commonjs",
+  "main": "index.js",
+  "scripts": {
+    "test": "node ."
+  },
+  "dependencies": {
+    "discord.js": "^14.22.1"
+  },
+  "devDependencies": {
+    "@eslint/js": "^9.35.0",
+    "eslint": "^9.35.0"
+  }
+}
