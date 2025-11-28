@@ -1,0 +1,11 @@
+{
+  "token": "TU_TOKEN_DE_DISCORD_AQUI",
+  "mongoUri": "mongodb://localhost:27017/ucbot",
+  "lavalink": {
+    "active": true,
+    "host": "localhost",
+    "port": 2333,
+    "password": "youshallnotpass",
+    "secure": false
+  }
+}
