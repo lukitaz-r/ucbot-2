@@ -1,6 +1,7 @@
 import { SlashCommandBuilder, EmbedBuilder, Message, ChatInputCommandInteraction } from 'discord.js';
 import { ensureVoice, buildEmbed, formatDuration } from '../../utils/music';
 import { ExtendedClient, Command } from '../../types';
+import { lavalink } from '../../../config/config.json';
 
 const command: Command = {
   name: 'queue',
@@ -27,6 +28,11 @@ const command: Command = {
   ): Promise<void> {
     const ctx = message || interaction;
     if (!ctx) return;
+
+    if (!lavalink.active) {
+      ctx?.reply('❌🎧 El bot no está activado para reproducir música.');
+      return;
+    }
 
     const voiceChannel = ensureVoice(ctx as any);
     if (!voiceChannel) return;

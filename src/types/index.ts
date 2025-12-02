@@ -5,6 +5,7 @@ export interface ExtendedClient extends Client {
   commands: Collection<string, Command>;
   aliases: Collection<string, string>;
   manager: Manager;
+  color: string;
 }
 
 export interface Command {

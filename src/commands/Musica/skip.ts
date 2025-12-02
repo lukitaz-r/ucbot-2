@@ -1,6 +1,7 @@
 import { SlashCommandBuilder, Message, ChatInputCommandInteraction } from 'discord.js';
 import { ensureVoice, buildEmbed } from '../../utils/music';
 import { ExtendedClient, Command } from '../../types';
+import { lavalink } from '../../../config/config.json';
 
 const command: Command = {
   name: 'skip',
@@ -27,6 +28,11 @@ const command: Command = {
   ): Promise<any> {
     const ctx = message || interaction;
     if (!ctx) return;
+
+    if (!lavalink.active) {
+      ctx?.reply('❌🎧 El bot no está activado para reproducir música.');
+      return;
+    }
 
     const user = message?.author || interaction?.user;
     if (!user) return;

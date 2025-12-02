@@ -1,8 +1,8 @@
-import { Client, Interaction, ButtonInteraction, EmbedBuilder, ActionRowBuilder, ButtonBuilder, TextChannel, GuildChannel, ChannelType } from 'discord.js';
-const { asegurar_todo } = require("../utils/funciones.js");
-const setupSchema = require(`${process.cwd()}/models/setups`);
-const ticketSchema = require(`${process.cwd()}/models/tickets`);
-const html = require('discord-html-transcripts');
+import { Client, Interaction, ButtonInteraction, EmbedBuilder, ActionRowBuilder, ButtonBuilder, TextChannel, GuildChannel, ChannelType, MessageFlags } from 'discord.js';
+import { asegurar_todo } from '../utils/funciones';
+import setupSchema from '../models/setups';
+import ticketSchema from '../models/tickets';
+import html from 'discord-html-transcripts';
 
 interface SetupData {
   guildID: string;
@@ -24,8 +24,7 @@ async function deleteTicketData(interaction: ButtonInteraction) {
   await ticketSchema.deleteOne({ guildID: interaction.guild?.id, canal: interaction.channel?.id });
 }
 
-module.exports = (client: Client) => {
-
+export default (client: Client) => {
   //CREACIÓN DE TICKETS
   client.on("interactionCreate", async (interaction: Interaction) => {
     try {
@@ -46,12 +45,12 @@ module.exports = (client: Client) => {
       //comprobar si el usuario ya tiene un ticket creado en el servidor y NO esté cerrado, y si es así, hacemos return;
       for (const ticket of ticket_data) {
         if (interaction.guild.channels.cache.get(ticket.canal)) {
-          await buttonInteraction.reply({ content: `❌ **Ya tienes un ticket creado en <#${ticket.canal}>**`, ephemeral: true });
+          await buttonInteraction.reply({ content: `❌ **Ya tienes un ticket creado en <#${ticket.canal}>**`, flags: MessageFlags.Ephemeral });
           return;
         }
       }
 
-      await buttonInteraction.reply({ content: "⌛ **Creando tu ticket... Porfavor espere**", ephemeral: true });
+      await buttonInteraction.reply({ content: "⌛ **Creando tu ticket... Porfavor espere**", flags: MessageFlags.Ephemeral });
       //creamos el canal
       const channel = await interaction.guild.channels.create({
         name: `🎫│ticket-${interaction.user.username}`.substring(0, 50),
@@ -68,10 +67,10 @@ module.exports = (client: Client) => {
             id: interaction.user.id,
             allow: ["ViewChannel"]
           },
-          {
-            id: "1373132705491058708",
-            allow: ["ViewChannel"]
-          },
+          // {
+          //   id: "1373132705491058708",
+          //   allow: ["ViewChannel"]
+          // }
         ]
       });
       //enviamos la bienvenida en el ticket del usuario
@@ -85,7 +84,7 @@ module.exports = (client: Client) => {
           [
             new ButtonBuilder().setStyle(4).setLabel("CERRAR").setEmoji("🔒").setCustomId("cerrar_ticket"),
             new ButtonBuilder().setStyle(2).setLabel("BORRAR").setEmoji("🗑").setCustomId("borrar_ticket"),
-            new ButtonBuilder().setStyle(1).setLabel("GUARDAR").setEmoji("💾").setCustomId("guardar_ticket"),
+            new ButtonBuilder().setStyle(1).setLabel("DESCARGAR").setEmoji("💾").setCustomId("guardar_ticket"),
           ]
         )]
       });
@@ -121,7 +120,7 @@ module.exports = (client: Client) => {
         case "cerrar_ticket": {
           //si el ticket ya está cerrado, hacemos return;
           if (ticket_data && ticket_data.cerrado) {
-            await buttonInteraction.reply({ content: `❌ **Este ticket ya estaba cerrado!**`, ephemeral: true });
+            await buttonInteraction.reply({ content: `❌ **Este ticket ya estaba cerrado!**`, flags: MessageFlags.Ephemeral });
             return;
           }
           await buttonInteraction.deferUpdate();
@@ -147,7 +146,7 @@ module.exports = (client: Client) => {
           collector.on("collect", async (boton: ButtonInteraction) => {
             //si la persona que hace clic en el botón de verificarse NO es la misma persona que ha hecho clic al botón de cerrar ticket, return;
             if (boton.user.id !== interaction.user.id) {
-              await boton.reply({ content: `❌ **No puedes hacer eso! Solo ${interaction.user} puede!**`, ephemeral: true });
+              await boton.reply({ content: `❌ **No puedes hacer eso! Solo ${interaction.user} puede!**`, flags: MessageFlags.Ephemeral });
               return;
             }
 
@@ -208,7 +207,7 @@ module.exports = (client: Client) => {
 
           collector.on("collect", async (boton: ButtonInteraction) => {
             if (boton.user.id !== interaction.user.id) {
-              await boton.reply({ content: `❌ **No puedes hacer eso! Solo ${interaction.user} puede!**`, ephemeral: true });
+              await boton.reply({ content: `❌ **No puedes hacer eso! Solo ${interaction.user} puede!**`, flags: MessageFlags.Ephemeral });
               return;
             }
             collector.stop();
@@ -257,8 +256,7 @@ module.exports = (client: Client) => {
           //generamos el archivo html con la conversación
           const adjunto = await html.createTranscript(interaction.channel, {
             limit: -1,
-            returnBuffer: false,
-            fileName: `${(interaction.channel as GuildChannel).name}.html`
+            filename: `${(interaction.channel as GuildChannel).name}.html`
           })
 
           await mensaje.edit({

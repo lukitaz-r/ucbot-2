@@ -1,6 +1,7 @@
 import { SlashCommandBuilder, Message, ChatInputCommandInteraction } from 'discord.js';
 import { ensureVoice, buildEmbed } from '../../utils/music';
 import { ExtendedClient, Command } from '../../types';
+import { lavalink } from '../../../config/config.json';
 
 const command: Command = {
   name: 'pause',
@@ -25,8 +26,11 @@ const command: Command = {
     prefix: string,
     interaction: ChatInputCommandInteraction | null,
   ): Promise<any> {
+
     const ctx = message || interaction;
     if (!ctx) return;
+
+    if (!lavalink.active) return ctx?.reply('❌🎧 El bot no está activado para reproducir música.');
 
     const user = message?.author || interaction?.user;
     if (!user) return;

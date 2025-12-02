@@ -1,6 +1,7 @@
 import { SlashCommandBuilder, Message, ChatInputCommandInteraction } from 'discord.js';
 import { createPlayer, searchMusic, enqueuePlaylist, enqueueTrack, ensureVoice, buildEmbed } from '../../utils/music';
 import { ExtendedClient, Command } from '../../types';
+import { lavalink } from '../../../config/config.json';
 
 const command: Command = {
   name: 'play',
@@ -38,6 +39,11 @@ const command: Command = {
     // Determina el contexto (mensaje o slash)
     const ctx = message || interaction;
     if (!ctx) return;
+
+    if (!lavalink.active) {
+      ctx?.reply('❌🎧 El bot no está activado para reproducir música.');
+      return;
+    }
 
     const user = message?.author || interaction?.user;
     if (!user) return;

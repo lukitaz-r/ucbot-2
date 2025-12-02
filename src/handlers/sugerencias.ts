@@ -1,8 +1,10 @@
 import { Client, Message, EmbedBuilder, ActionRowBuilder, ButtonBuilder, Interaction, ButtonInteraction, TextChannel } from 'discord.js';
+import { logs } from '../../config/config.json';
+import setupSchema from '../models/setups';
+import votosSchema from '../models/votos-sugs';
+import { asegurar_todo } from '../utils/funciones';
 
-const setupSchema = require(`${process.cwd()}/models/setups.js`);
-const votosSchema = require(`${process.cwd()}/models/votos-sugs.js`);
-const { asegurar_todo } = require(`${process.cwd()}/utils/funciones.js`);
+const IMAGE_LOGS_CHANNEL_ID = logs; // 🔴 Poner ID del canal de logs de imágenes aquí
 
 interface SetupData {
   guildID: string;
@@ -17,7 +19,7 @@ interface VotosData {
   save: () => Promise<void>;
 }
 
-module.exports = (client: Client) => {
+export default (client: Client) => {
   //evento al enviar mensaje en el canal de sugerencias
   client.on("messageCreate", async (message: Message) => {
     try {
@@ -27,8 +29,30 @@ module.exports = (client: Client) => {
       const setup_data: SetupData | null = await setupSchema.findOne({ guildID: message.guild.id });
       //comprobaciones previas
       if (!setup_data || !setup_data.sugerencias || !message.guild.channels.cache.get(setup_data.sugerencias) || message.channel.id !== setup_data.sugerencias) return;
-      //eliminamos la sugerencia enviada por el autor y lo convertimos en sugerencia con botones
+
+      //eliminamos la sugerencia enviada por el autor
       message.delete().catch(() => { });
+
+      let imageUrl = null;
+      if (message.attachments.size > 0 && message.attachments.first()?.contentType?.startsWith("image/")) {
+        const attachment = message.attachments.first();
+        const logsChannel = client.channels.cache.get(IMAGE_LOGS_CHANNEL_ID) as TextChannel;
+        if (logsChannel) {
+          try {
+            const logMsg = await logsChannel.send({
+              content: `Imagen de sugerencia de \`${message.author.tag}\` (${message.author.id})`,
+              files: [attachment!]
+            });
+            imageUrl = logMsg.attachments.first()?.url;
+          } catch (err) {
+            console.error('Error al enviar imagen al canal de logs:', err);
+            imageUrl = attachment!.url;
+          }
+        } else {
+          imageUrl = attachment!.url;
+        }
+      }
+
       //definimos los botones
       const botones = new ActionRowBuilder<ButtonBuilder>().addComponents([
         //votar si
@@ -38,18 +62,21 @@ module.exports = (client: Client) => {
         //ver votanes
         new ButtonBuilder().setStyle(1).setLabel("¿Quién ha votado?").setEmoji("❓").setCustomId("ver_votos"),
       ])
+
       //enviamos el mensaje con los botones
+      if (!(message.content.length > 0) && !imageUrl) return;
       const msg = await (message.channel as TextChannel).send({
         embeds: [
           new EmbedBuilder()
             .setAuthor({ name: "Sugerencia de " + message.author.tag, iconURL: message.author.displayAvatarURL({ forceStatic: false }) })
-            .setDescription(`>>> ${message.content}`)
+            .setDescription(message.content ? (`>>> ${(message.content.length > 1024 ? message.content.slice(0, 1024) + "..." : message.content)}`) : null)
             .addFields([
               { name: `✅ Votos positivos`, value: "0 votos", inline: true },
               { name: `❌ Votos negativos`, value: "0 votos", inline: true }
             ])
+            .setImage((imageUrl || null))
             .setColor((client as any).color)
-            .setFooter({ text: "Quieres sugerir algo? Simplemente envía la sugerencia aquí!", iconURL: "https://images.emojiterra.com/google/android-pie/512px/1f4a1.png" })
+            .setFooter({ text: "¿Quieres sugerir algo? ¡Simplemente envía la sugerencia aquí!", iconURL: "https://images.emojiterra.com/google/android-pie/512px/1f4a1.png" })
         ],
         components: [botones]
       })

@@ -1,6 +1,6 @@
 import { Client, MessageReaction, User, Role, GuildMember, TextChannel, PartialMessageReaction, PartialUser } from 'discord.js';
-const setupSchema = require(`${process.cwd()}/models/setups.js`);
-const { asegurar_todo } = require(`${process.cwd()}/utils/funciones.js`);
+import setupSchema from '../models/setups';
+import { asegurar_todo } from '../utils/funciones';
 
 interface ReaccionRol {
   ID_MENSAJE: string;
@@ -15,7 +15,7 @@ interface SetupData {
   reaccion_roles: ReaccionRol[];
 }
 
-module.exports = (client: Client) => {
+export default (client: Client) => {
   //AÑADIR ROLES AL AÑADIR LA REACCIÓN
   client.on("messageReactionAdd", async (reaction: MessageReaction | PartialMessageReaction, user: User | PartialUser) => {
     try {
@@ -28,7 +28,8 @@ module.exports = (client: Client) => {
       //Aseguramos la base de datos en caso de que no haya una
       await asegurar_todo(reaction.message.guild.id);
       //Cargamos la base de datos
-      const setup: SetupData = await setupSchema.findOne({ guildID: reaction.message.guild.id });
+      const setup: SetupData | null = await setupSchema.findOne({ guildID: reaction.message.guild.id });
+      if (!setup) return;
       const reaccionroles = setup.reaccion_roles;
       //Comprobaciones previas (Si no hay un setup de reacciones, return)
       if (!reaccionroles || !reaccionroles.length || reaccionroles.length === 0 || reaccionroles === undefined || reaccionroles === null) return;
@@ -125,7 +126,8 @@ module.exports = (client: Client) => {
       //Aseguramos la base de datos en caso de que no haya una
       await asegurar_todo(reaction.message.guild.id);
       //Cargamos la base de datos
-      const setup: SetupData = await setupSchema.findOne({ guildID: reaction.message.guild.id });
+      const setup: SetupData | null = await setupSchema.findOne({ guildID: reaction.message.guild.id });
+      if (!setup) return;
       const reaccionroles = setup.reaccion_roles;
       //Comprobaciones previas (Si no hay un setup de reacciones, return)
       if (!reaccionroles || !reaccionroles.length || reaccionroles.length === 0 || reaccionroles === undefined || reaccionroles === null) return;

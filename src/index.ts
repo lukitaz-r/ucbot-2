@@ -30,6 +30,7 @@ const client = new Client({
 
 client.commands = new Collection();
 client.aliases = new Collection();
+client.color = config.color;
 
 if (lavalink.active == true) {
   client.manager = new Manager({
