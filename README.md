@@ -95,10 +95,10 @@ Si deseas usar los comandos de música, necesitas Lavalink:
 
 Si **NO** quieres usar música, establece `"active": false` en la sección lavalink.
 
-### 4. Compilar el proyecto
+### 4. Ejecutar el bot
 
 ```bash
-npm run build
+npm run start
 ```
 
 ## 🎮 Uso
@@ -108,7 +108,7 @@ npm run build
 Ejecuta el bot con recarga automática:
 
 ```bash
-npm run dev
+npm run start
 ```
 
 ### Modo Producción
@@ -116,15 +116,13 @@ npm run dev
 Compila y ejecuta el bot:
 
 ```bash
-npm run build
-npm start
+npm run start
 ```
 
 ### Otros Scripts
 
 ```bash
-npm run watch    # Compila TypeScript en modo watch
-npm test         # Compila y ejecuta el bot
+npm run start    # Ejecuta el bot
 ```
 
 ## 📂 Estructura del Proyecto
@@ -228,8 +226,8 @@ const command: Command = {
 export = command;
 ```
 
-3. Compila con `npm run build`
-4. El handler cargará automáticamente el nuevo comando
+4. Corre el bot con `npm run start`
+3. El handler cargará automáticamente el nuevo comando
 
 ### Añadir un nuevo evento
 
@@ -262,7 +260,7 @@ export default {
 ### La música no funciona
 
 - Verifica que Lavalink esté ejecutándose
-- Comprueba la configuración de Lavalink en `config.json`
+- Comprueba la configuración de Lavalink en `config.json` y `config`
 - Si no usas música, establece `"active": false` en la configuración de Lavalink
 
 ### Errores de MongoDB

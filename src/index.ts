@@ -31,7 +31,7 @@ const client = new Client({
 client.commands = new Collection();
 client.aliases = new Collection();
 
-if (lavalink.active === true) {
+if (lavalink.active == true) {
   client.manager = new Manager({
     // Configura el server de LavaLink al que te tienes que conectar
     nodes: [
@@ -134,7 +134,7 @@ if (lavalink.active === true) {
   });
 }
 
-readdirSync('./handlers').forEach((handler) => {
+readdirSync('./src/handlers').forEach((handler) => {
   try {
     require(`./handlers/${handler}`).default(client);
   } catch (e) {

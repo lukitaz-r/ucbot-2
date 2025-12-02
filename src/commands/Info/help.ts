@@ -10,7 +10,7 @@ const FOOTER = {
   text: '© desarrollado por lukitaz_r | 2025',
 };
 
-function listCategories(path = './commands'): string[] {
+function listCategories(path = './src/commands'): string[] {
   return readdirSync(path).filter(dir => dir);
 }
 
@@ -39,7 +39,7 @@ function buildCommandEmbed(cmd: Command): EmbedBuilder {
 }
 
 function buildCategoryEmbed(category: string, index: number, total: number, guild: Guild): EmbedBuilder {
-  const commands = readdirSync(`./commands/${category}`)
+  const commands = readdirSync(`./src/commands/${category}`)
     .filter(file => file.endsWith('.js') || file.endsWith('.ts'))
     .map(file => `\`${file.replace(/\.(js|ts)$/, '')}\``);
 
@@ -57,6 +57,7 @@ const emojiMap: Record<string, string> = {
   Musica: '🎧',
   Info: '❓',
   Misc: '➕',
+  Setup: '⚙',
   // … el resto de tus carpetas
 };
 
@@ -111,7 +112,7 @@ const command: Command = {
       const overview = new EmbedBuilder()
         .setTitle(`Ayuda de __${client.user!.tag}__`)
         .setColor(color as any)
-        .setDescription('Bot multifuncional en desarrollo por `lukitaz_r`')
+        .setDescription('Bot multifuncional en desarrollo por [lukitaz_r](https://github.com/lukitaz_r)')
         .addFields(
           { name: '❓ ¿Quién soy?', value: `👋 Hola **${message.author.username}**, soy **${client.user!.username}** con funciones de ADMIN, MODERACIÓN, MÚSICA y más.` },
           { name: '📈 Estadísticas', value: `⚙ **${client.commands.size} comandos** en **${client.guilds.cache.size} servidores**\n📶 \`${latency}ms\` ping` },
