@@ -8,7 +8,7 @@ const allowedLinks: string[] = config.allowedLinks || [];
 const whitelistedChannels: string[] = config.opcionales?.whitelistedChannels || [];
 const privilegedRoleId: string[] = config.opcionales?.privilegedRoleId || [];
 
-export = (client: ExtendedClient) => {
+export default (client: ExtendedClient) => {
   client.on('messageCreate', async (message: Message) => {
     if (message.author.bot) return;
     if (whitelistedChannels.includes(message.channel.id)) return;
