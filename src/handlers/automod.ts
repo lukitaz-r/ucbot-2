@@ -1,17 +1,13 @@
 import { Message } from 'discord.js';
 import { ExtendedClient } from '../types';
-import config from '../../config/config.json';
+import { allowedLinks, opcionales } from '../../config/config.json';
 import { asegurar_todo } from '../utils/funciones';
 import warnSchema from '../models/warns';
-
-const allowedLinks: string[] = config.allowedLinks || [];
-const whitelistedChannels: string[] = config.opcionales?.whitelistedChannels || [];
-const privilegedRoleId: string[] = config.opcionales?.privilegedRoleId || [];
 
 export default (client: ExtendedClient) => {
   client.on('messageCreate', async (message: Message) => {
     if (message.author.bot) return;
-    if (whitelistedChannels.includes(message.channel.id)) return;
+    if (opcionales?.whitelistedChannels.includes(message.channel.id)) return;
     if (!message.guild) return;
 
     const urlRegex = /(https?:\/\/[\w\.-]+(?:\.[\w\.-]+)+(?:[\w\-\._~:\/?#\[\]@!\$&'\(\)\*\+,;=.]+)?)/gi;
@@ -34,7 +30,7 @@ export default (client: ExtendedClient) => {
       const member = await message.guild.members.fetch(message.author.id);
       let hasPrivilegedRole = false;
 
-      for (const roleId of privilegedRoleId) {
+      for (const roleId of opcionales?.privilegedRoleId) {
         if (member.roles.cache.has(roleId)) {
           hasPrivilegedRole = true;
           break;
