@@ -1,10 +1,12 @@
-import { Client, Collection, Message, ChatInputCommandInteraction, SlashCommandBuilder, SlashCommandOptionsOnlyBuilder } from 'discord.js';
+import { Client, Collection, Message, ChatInputCommandInteraction, SlashCommandBuilder, SlashCommandOptionsOnlyBuilder, SlashCommandSubcommandsOnlyBuilder } from 'discord.js';
 import { Manager } from 'moonlink.js';
+import { GiveawaysManager } from 'discord-giveaways';
 
 export interface ExtendedClient extends Client {
   commands: Collection<string, Command>;
   aliases: Collection<string, string>;
   manager: Manager;
+  giveawaysManager: GiveawaysManager;
   color: string;
 }
 
@@ -14,7 +16,7 @@ export interface Command {
   desc?: string;
   permisos?: string[];
   permisos_bot?: string[];
-  slashBuilder?: SlashCommandBuilder | SlashCommandOptionsOnlyBuilder;
+  slashBuilder?: SlashCommandBuilder | SlashCommandOptionsOnlyBuilder | SlashCommandSubcommandsOnlyBuilder;
   run: (
     client: ExtendedClient,
     message: Message | null,

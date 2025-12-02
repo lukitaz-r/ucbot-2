@@ -57,7 +57,8 @@ const emojiMap: Record<string, string> = {
   Musica: '🎧',
   Info: '❓',
   Misc: '➕',
-  Setup: '⚙',
+  Setup: '✅',
+  Ajustes: '⚙',
   // … el resto de tus carpetas
 };
 

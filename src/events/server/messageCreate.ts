@@ -3,7 +3,7 @@ import { ExtendedClient } from '../../types';
 import { automod } from '../../utils/funciones';
 import config from '../../../config/config.json';
 
-const { prefix, greetings, opcionales } = config;
+const { prefix, greetings } = config;
 
 export = {
   name: 'messageCreate',
@@ -12,9 +12,9 @@ export = {
    * @param message Mensaje que se lee
    */
   run: async (client: ExtendedClient, message: Message): Promise<any> => {
-    const { apiIA } = opcionales || {};
     const botId = client.user!.id;
     const tag = `<@${botId}>`;
+    const saludo = greetings[Math.floor(Math.random() * greetings.length)];
 
     // Ignorar bots y mensajes que no sean de servidor o canal de texto
     if (message.author.bot || !message.guild || !message.channel) return;
@@ -38,7 +38,13 @@ export = {
     }
 
     const invoked = args.shift()?.toLowerCase();
-    if (!invoked) return;
+
+    if (!invoked) {
+      if (isMention) {
+        return message.reply(saludo);
+      }
+      return;
+    }
 
     const command =
       client.commands.get(invoked)
@@ -76,13 +82,6 @@ export = {
     }
 
     // Menciones al bot sin comando válido
-    if (message.author.id === '1052388988368990279' && apiIA) {
-      // Usuario premium con IA activada
-      return client.commands.get('ia')?.run(client, message, args, prefix, null);
-    }
-
-    // Respuesta de saludo aleatorio
-    const saludo = greetings[Math.floor(Math.random() * greetings.length)];
     return message.reply(saludo);
   },
 };

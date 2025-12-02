@@ -1,8 +1,9 @@
-import { Client } from 'discord.js';
+import { ExtendedClient } from '../types';
+import { ColorResolvable } from 'discord.js';
 import { GiveawaysManager } from 'discord-giveaways';
 import sorteosSchema from '../models/sorteos';
 
-export default async (client: Client) => {
+export default async (client: ExtendedClient) => {
   //obtenemos la base de los sorteos pero si no existe la creamos.
   let db = await sorteosSchema.findOne({ ID: "sorteos" });
   if (!db) {
@@ -74,10 +75,11 @@ export default async (client: Client) => {
   }
 
   //crear sistema de sorteos
-  (client as any).giveawaysManager = new SorteosConMongoDB(client, {
+  //crear sistema de sorteos
+  client.giveawaysManager = new SorteosConMongoDB(client, {
     default: {
       botsCanWin: false,
-      embedColor: (client as any).color,
+      embedColor: client.color as ColorResolvable,
       embedColorEnd: "#000000",
       reaction: "🎉"
     }
