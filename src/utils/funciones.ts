@@ -6,9 +6,8 @@ import warnSchema from '../models/warns';
 import config from '../../config/config.json';
 import { ExtendedClient } from '../types';
 
-const { prefix, opcionales } = config;
+const { prefix, opcionales, allowedLinks } = config;
 
-const allowedLinks: string[] = opcionales?.allowedLinks || [];
 const privilegedRoleId: string[] = opcionales?.privilegedRoleId || [];
 
 export async function asegurar_todo(guildid?: string, userid?: string): Promise<void> {
@@ -216,7 +215,7 @@ export async function paginacion(client: ExtendedClient, message: Message<boolea
   });
   collector.on("end", () => {
     //desactivamos los botones y editamos el mensaje
-    embedpaginas.components[0].components.map((boton: { disabled: boolean; }) => boton.disabled = true)
+    embedpaginas.components[0].components.map((boton: any) => boton.disabled = true)
     embedpaginas.edit({ content: `El tiempo ha expirado!`, embeds: [embeds[paginaActual].setFooter({ text: `Pagina ${paginaActual + 1} / ${embeds.length}` })], components: [embedpaginas.components[0]] }).catch(() => { });
   });
 }

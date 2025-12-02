@@ -113,7 +113,7 @@ const command: Command = {
       const overview = new EmbedBuilder()
         .setTitle(`Ayuda de __${client.user!.tag}__`)
         .setColor(color as any)
-        .setDescription('Bot multifuncional en desarrollo por [lukitaz_r](https://github.com/lukitaz_r)')
+        .setDescription('Bot multifuncional en desarrollo por [lukitaz_r](https://github.com/lukitaz-r)')
         .addFields(
           { name: '❓ ¿Quién soy?', value: `👋 Hola **${message.author.username}**, soy **${client.user!.username}** con funciones de ADMIN, MODERACIÓN, MÚSICA y más.` },
           { name: '📈 Estadísticas', value: `⚙ **${client.commands.size} comandos** en **${client.guilds.cache.size} servidores**\n📶 \`${latency}ms\` ping` },

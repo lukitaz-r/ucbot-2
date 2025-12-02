@@ -13,62 +13,55 @@ export default (client: ExtendedClient) => {
     const urlRegex = /(https?:\/\/[\w\.-]+(?:\.[\w\.-]+)+(?:[\w\-\._~:\/?#\[\]@!\$&'\(\)\*\+,;=.]+)?)/gi;
     const foundLinks = message.content.match(urlRegex);
     if (!foundLinks) return;
-
     const unallowedLinks = foundLinks.filter(link => !allowedLinks.some(keyword => link.includes(keyword)));
     if (unallowedLinks.length === 0) return;
 
     try {
-      if (message.deletable) {
-        await message.delete();
-        console.log(`Deleted message from ${message.author.tag} containing unallowed links.`);
-      }
+      await message.delete()
+      console.log(`Deleted message from ${message.author.tag} containing unallowed links.`);
     } catch (error) {
       console.error(`Failed to delete message: ${error}`);
     }
 
     try {
       const member = await message.guild.members.fetch(message.author.id);
-      let hasPrivilegedRole = false;
-
-      for (const roleId of opcionales?.privilegedRoleId) {
-        if (member.roles.cache.has(roleId)) {
-          hasPrivilegedRole = true;
-          break;
+      let hasPrivilegedRole
+      for (let i = 0; i < opcionales?.privilegedRoleId.length; i++) {
+        if (member.roles.cache.has(opcionales?.privilegedRoleId[i])) {
+          hasPrivilegedRole = true
+          break
+        } else {
+          hasPrivilegedRole = false
         }
       }
-
       if (hasPrivilegedRole) {
-        console.log('No se aplicaron sanciones al usuario privilegiado');
-        return;
+        console.log('No se aplicaron sanciones al usuario privilegiado')
+        return
       }
 
       await asegurar_todo(message.guild.id, member.id);
 
-      await member.timeout(1000 * 60 * 10, 'Enlace no permitido');
-
-      // creamos el objeto del warn
-      const objeto_warn = {
+      await member.timeout(1000 * 60 * 10, `Enlace no permitido`)
+      //creamos el objeto del warn
+      let objeto_warn = {
         fecha: Date.now(),
         autor: client.user?.id || 'Bot',
-        razon: 'Enlace no permitido en el servidor!',
-      };
-
-      // empujamos el objeto en la base de datos
+        razon: "Enlace no permitido en el servidor!"
+      }
+      //empujamos el objeto en la base de datos
       await warnSchema.findOneAndUpdate({ guildID: message.guild.id, userID: member.id }, {
         $push: {
-          warnings: objeto_warn,
-        },
-      });
-
-      const data = await warnSchema.findOne({ guildID: message.guild.id, userID: member.id });
-      if (data && data.warnings.length > 8) {
-        if (member.bannable) {
-          await member.ban({ reason: 'Automod' });
-          console.log(`Baneado ${member.user.tag} por comportamiento sospechoso`);
+          warnings: objeto_warn
         }
+      })
+
+      let data = await warnSchema.findOne({ guildID: message.guild.id, userID: member.id })
+      if ((data?.warnings?.length ?? 0) > 8) {
+        await member.ban({ reason: "Automod" })
+        console.log(`Baneado ${member.user.tag} por comportamiento sospechoso`)
       }
     } catch (error) {
       console.error(`Failed to punish user: ${error}`);
     }
-  });
+  })
 };
